@@ -11,6 +11,7 @@ const debug = require('debug')('note:server');
 const cors = require('cors')
 
 // app modules
+const authRouter  = require('./router/auth-router');
 const handleError = require('./lib/handle-error');
 const listRouter = require('./router/list-router');
 const noteRouter = require('./router/note-router');
@@ -29,6 +30,7 @@ app.use(morgan('dev'));
 app.use(cors());
 
 // express routes
+app.use('/api', authRouter);
 app.use('/api', listRouter);
 app.use('/api', noteRouter);
 
@@ -43,5 +45,6 @@ app.use(handleError);
 
 // start server
 app.listen(port, function(){
+  console.log(`server up :: ${port}`);
   debug(`server up :: ${port}`);
 });

@@ -15,9 +15,9 @@ const Note = require('../model/note');
 let listRouter = module.exports = exports = new Router();
 
 // module logic
-listRouter.post('/list', jsonParser, function(req, res, next){
+listRouter.post('/list', jsonParser, jwtAuth, function(req, res, next){
   debug('POST /api/list');
-  if (!req.body.name ) 
+  if (!req.body.name )
     return next(createError(400, 'ERROR: list requires name field'));
   new List(req.body).save().then( list => {
       res.json(list)
@@ -30,6 +30,7 @@ listRouter.get('/list', function(req,res,next){
     .populate('notes')
     .then( lists => res.send(lists)).catch(next);
 });
+
 
 listRouter.get('/list/:id', function(req,res,next){
   debug('GET /api/list/:id');
@@ -56,6 +57,19 @@ listRouter.delete('/list/:id', jsonParser, function(req, res, next){
     })
     .then(() => {
       res.json(result);
-    })    
+    })
+    .catch(next)
+});
+
+listRouter.delete('/list/', jsonParser, function(req, res, next){
+  let result;
+  debug('PUT /api/list/');
+  List.remove({})
+    .then( list => {
+      result = list;
+    })
+    .then(() => {
+      res.json(result);
+    })
     .catch(next)
 });
